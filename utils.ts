@@ -152,6 +152,8 @@ export interface WiiLinkUser {
     BanReasonHidden: string,
     BanIssued: string,
     BanExpires: string,
+    VR?: number | null,
+    BR?: number | null,
 }
 
 export async function sendEmbedLog(
@@ -279,6 +281,8 @@ export function createUserEmbed(
 ): EmbedBuilder {
     const fc = pidToFc(user.ProfileId);
 
+    const vr = user.VR != null ? user.VR.toLocaleString() : "Unknown";
+    const br = user.BR != null ? user.BR.toLocaleString() : "Unknown";
     const embed = templateEmbed
         ? templateEmbed
         : new EmbedBuilder()
@@ -315,6 +319,8 @@ export function createUserEmbed(
     embed.addFields(
         { name: "Profile ID", value: `${user.ProfileId}` },
         { name: "Mii Name", value: miiName },
+        { name: "VR", value: vr },
+        { name: "BR", value: br },
         { name: "Open Host", value: `${user.OpenHost}` },
         { name: "Banned", value: `${user.Restricted}${expiredBan ? " (Expired)" : ""}` },
         { name: "Discord ID", value: user.DiscordID.length != 0 ? `<@${user.DiscordID}>` : "None Linked" }
