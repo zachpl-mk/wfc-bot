@@ -4,7 +4,13 @@ import { makeRequest, pidToFc, resolveModRestrictPermission, resolvePidFromStrin
 
 const config = getConfig();
 
-type RatingType = "vr" | "br";
+type RatingType = "vr" | "br" | "mmr";
+
+const ratingLimits: Record<RatingType, { min: number, max: number }> = {
+    vr: { min: 100, max: 1000000 },
+    br: { min: 100, max: 1000000 },
+    mmr: { min: 100, max: 30000 },
+};
 
 interface SetRatingResponse {
     User?: WiiLinkUser,
@@ -17,6 +23,8 @@ interface SetRatingResponse {
     vr?: number,
     BR?: number,
     br?: number,
+    MMR?: number,
+    mmr?: number,
     Error?: string,
     error?: string,
 }
@@ -37,8 +45,8 @@ export function makeSetRatingCommand(ratingType: RatingType) {
             .addIntegerOption(option => option.setName("value")
                 .setDescription(`${ratingLabel} value to set`)
                 .setRequired(true)
-                .setMinValue(100)
-                .setMaxValue(1000000))
+                .setMinValue(ratingLimits[ratingType].min)
+                .setMaxValue(ratingLimits[ratingType].max))
             .addStringOption(option => option.setName("reason")
                 .setDescription(`reason for updating ${ratingLabel}`)
                 .setRequired(true))

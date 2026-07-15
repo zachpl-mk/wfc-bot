@@ -154,6 +154,22 @@ export interface WiiLinkUser {
     BanExpires: string,
     VR?: number | null,
     BR?: number | null,
+    MMR?: number | null,
+}
+
+export interface MKWRatings {
+    found: number,
+    vr: number,
+    br: number,
+    mmr: number,
+}
+
+export async function getMKWRatings(pid: number): Promise<[boolean, MKWRatings | null]> {
+    const [success, res] = await makeRequest(`/api/mkw_rr_ratings?pid=${pid}`, "GET");
+    if (!success)
+        return [false, null];
+
+    return [true, res as MKWRatings];
 }
 
 export async function sendEmbedLog(
@@ -283,6 +299,7 @@ export function createUserEmbed(
 
     const vr = user.VR != null ? user.VR.toLocaleString() : "Unknown";
     const br = user.BR != null ? user.BR.toLocaleString() : "Unknown";
+    const mmr = user.MMR != null ? user.MMR.toLocaleString() : "Unknown";
     const embed = templateEmbed
         ? templateEmbed
         : new EmbedBuilder()
@@ -321,6 +338,7 @@ export function createUserEmbed(
         { name: "Mii Name", value: miiName },
         { name: "VR", value: vr },
         { name: "BR", value: br },
+        { name: "MMR", value: mmr },
         { name: "Open Host", value: `${user.OpenHost}` },
         { name: "Banned", value: `${user.Restricted}${expiredBan ? " (Expired)" : ""}` },
         { name: "Discord ID", value: user.DiscordID.length != 0 ? `<@${user.DiscordID}>` : "None Linked" }

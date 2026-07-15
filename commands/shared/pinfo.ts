@@ -1,5 +1,5 @@
 import { CacheType, ChatInputCommandInteraction, InteractionReplyOptions, MessageFlags, } from "discord.js";
-import { createUserEmbed, makeWFCRequest, pidToFc, resolvePidFromString, validateID } from "../../utils.js";
+import { createUserEmbed, getMKWRatings, makeWFCRequest, pidToFc, resolvePidFromString, validateID } from "../../utils.js";
 import { getConfig } from "../../config.js";
 
 const config = getConfig();
@@ -50,9 +50,15 @@ export async function pinfo(interaction: ChatInputCommandInteraction<CacheType>,
         return;
     }
 
+    const user = res.User ?? res.user;
+    if (user) {
+        const [ratingsSuccess, ratings] = await getMKWRatings(pid);
+        user.MMR = ratingsSuccess && ratings && ratings.mmr > 0 ? ratings.mmr : null;
+    }
+
     await reply(
         interaction,
         priv,
-        { embeds: [createUserEmbed(res.User, priv)] }
+        { embeds: [createUserEmbed(user, priv)] }
     );
 }
