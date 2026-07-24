@@ -23,8 +23,6 @@ interface SetRatingResponse {
     vr?: number,
     BR?: number,
     br?: number,
-    MMR?: number,
-    mmr?: number,
     Error?: string,
     error?: string,
 }

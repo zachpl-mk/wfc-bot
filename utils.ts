@@ -163,7 +163,6 @@ export interface MKWRatings {
     found: number,
     vr: number,
     br: number,
-    mmr: number,
     mmr_retro: number,
     mmr_ct: number,
     mmr_regular: number,
