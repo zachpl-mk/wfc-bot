@@ -154,18 +154,18 @@ export interface WiiLinkUser {
     BanExpires: string,
     VR?: number | null,
     BR?: number | null,
-    MMRRetro?: number | null,
+    MMRRT?: number | null,
     MMRCT?: number | null,
-    MMRRegular?: number | null,
+    MMRVanilla?: number | null,
 }
 
 export interface MKWRatings {
     found: number,
     vr: number,
     br: number,
-    mmr_retro: number,
+    mmr_rt: number,
     mmr_ct: number,
-    mmr_regular: number,
+    mmr_vanilla: number,
 }
 
 export async function getMKWRatings(pid: number): Promise<[boolean, MKWRatings | null]> {
@@ -303,9 +303,9 @@ export function createUserEmbed(
 
     const vr = user.VR != null ? user.VR.toLocaleString() : "Unknown";
     const br = user.BR != null ? user.BR.toLocaleString() : "Unknown";
-    const mmrRetro = user.MMRRetro != null ? user.MMRRetro.toLocaleString() : "Unknown";
+    const mmrRT = user.MMRRT != null ? user.MMRRT.toLocaleString() : "Unknown";
     const mmrCT = user.MMRCT != null ? user.MMRCT.toLocaleString() : "Unknown";
-    const mmrRegular = user.MMRRegular != null ? user.MMRRegular.toLocaleString() : "Unknown";
+    const mmrVanilla = user.MMRVanilla != null ? user.MMRVanilla.toLocaleString() : "Unknown";
     const embed = templateEmbed
         ? templateEmbed
         : new EmbedBuilder()
@@ -344,9 +344,9 @@ export function createUserEmbed(
         { name: "Mii Name", value: miiName },
         { name: "VR", value: vr },
         { name: "BR", value: br },
-        { name: "MMR (Retro)", value: mmrRetro },
+        { name: "MMR (RT)", value: mmrRT },
         { name: "MMR (CT)", value: mmrCT },
-        { name: "MMR (Regular)", value: mmrRegular },
+        { name: "MMR (Vanilla)", value: mmrVanilla },
         { name: "Open Host", value: `${user.OpenHost}` },
         { name: "Banned", value: `${user.Restricted}${expiredBan ? " (Expired)" : ""}` },
         { name: "Discord ID", value: user.DiscordID.length != 0 ? `<@${user.DiscordID}>` : "None Linked" }

@@ -46,9 +46,9 @@ export function makeSetRatingCommand(ratingType: RatingType) {
             .setDescription("competitive mode to update")
             .setRequired(true)
             .addChoices(
-                { name: "Retro", value: "retro" },
+                { name: "RT", value: "rt" },
                 { name: "CT", value: "ct" },
-                { name: "Regular", value: "regular" },
+                { name: "Vanilla", value: "vanilla" },
             ));
     }
 
