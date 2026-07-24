@@ -53,7 +53,9 @@ export async function pinfo(interaction: ChatInputCommandInteraction<CacheType>,
     const user = res.User ?? res.user;
     if (user) {
         const [ratingsSuccess, ratings] = await getMKWRatings(pid);
-        user.MMR = ratingsSuccess && ratings && ratings.mmr > 0 ? ratings.mmr : null;
+        user.MMRRetro = ratingsSuccess && ratings && ratings.mmr_retro > 0 ? ratings.mmr_retro : null;
+        user.MMRCT = ratingsSuccess && ratings && ratings.mmr_ct > 0 ? ratings.mmr_ct : null;
+        user.MMRRegular = ratingsSuccess && ratings && ratings.mmr_regular > 0 ? ratings.mmr_regular : null;
     }
 
     await reply(

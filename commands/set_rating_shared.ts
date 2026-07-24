@@ -31,26 +31,39 @@ interface SetRatingResponse {
 
 export function makeSetRatingCommand(ratingType: RatingType) {
     const ratingLabel = ratingType.toUpperCase();
+    const command = new SlashCommandBuilder()
+        .setName(`set${ratingType}`)
+        .setDescription(`Set a player's ${ratingLabel}`)
+        .addStringOption(option => option.setName("id")
+            .setDescription("friend code or pid to update")
+            .setRequired(true))
+        .addIntegerOption(option => option.setName("value")
+            .setDescription(`${ratingLabel} value to set`)
+            .setRequired(true)
+            .setMinValue(ratingLimits[ratingType].min)
+            .setMaxValue(ratingLimits[ratingType].max));
+
+    if (ratingType === "mmr") {
+        command.addStringOption(option => option.setName("mode")
+            .setDescription("competitive mode to update")
+            .setRequired(true)
+            .addChoices(
+                { name: "Retro", value: "retro" },
+                { name: "CT", value: "ct" },
+                { name: "Regular", value: "regular" },
+            ));
+    }
+
+    command.addStringOption(option => option.setName("reason")
+        .setDescription(`reason for updating ${ratingLabel}`)
+        .setRequired(true))
+        .setDefaultMemberPermissions(resolveModRestrictPermission());
 
     return {
         modOnly: true,
         adminOnly: false,
 
-        data: new SlashCommandBuilder()
-            .setName(`set${ratingType}`)
-            .setDescription(`Set a player's ${ratingLabel}`)
-            .addStringOption(option => option.setName("id")
-                .setDescription("friend code or pid to update")
-                .setRequired(true))
-            .addIntegerOption(option => option.setName("value")
-                .setDescription(`${ratingLabel} value to set`)
-                .setRequired(true)
-                .setMinValue(ratingLimits[ratingType].min)
-                .setMaxValue(ratingLimits[ratingType].max))
-            .addStringOption(option => option.setName("reason")
-                .setDescription(`reason for updating ${ratingLabel}`)
-                .setRequired(true))
-            .setDefaultMemberPermissions(resolveModRestrictPermission()),
+        data: command,
 
         exec: async function(interaction: ChatInputCommandInteraction<CacheType>) {
             let id = interaction.options.getString("id", true);
@@ -63,11 +76,13 @@ export function makeSetRatingCommand(ratingType: RatingType) {
             }
 
             const pid = resolvePidFromString(id);
+            const mmrMode = ratingType === "mmr" ? interaction.options.getString("mode", true) : null;
+            const selectedRatingLabel = mmrMode ? `${ratingLabel} (${mmrMode.toUpperCase()})` : ratingLabel;
             const reason = interaction.options.getString("reason", true).trim();
             const value = interaction.options.getInteger("value", true);
 
             if (reason.length == 0) {
-                await interaction.reply({ content: `Error updating ${ratingLabel} for friend code or pid "${id}": Empty reason` });
+                await interaction.reply({ content: `Error updating ${selectedRatingLabel} for friend code or pid "${id}": Empty reason` });
                 return;
             }
 
@@ -75,14 +90,14 @@ export function makeSetRatingCommand(ratingType: RatingType) {
             const [success, rawRes] = await makeRequest("/api/set_mkw_rating", "POST", {
                 secret: config.wfcSecret,
                 pid: pid,
-                rating_type: ratingType,
+                rating_type: mmrMode ? `mmr_${mmrMode}` : ratingType,
                 reason: reason,
                 value: value,
             });
             const res = rawRes as SetRatingResponse;
 
             if (!success) {
-                await interaction.reply({ content: `Failed to update ${ratingLabel} for friend code "${fc}": error ${res.Error ?? res.error ?? "no error message provided"}` });
+                await interaction.reply({ content: `Failed to update ${selectedRatingLabel} for friend code "${fc}": error ${res.Error ?? res.error ?? "no error message provided"}` });
                 return;
             }
 
@@ -90,13 +105,13 @@ export function makeSetRatingCommand(ratingType: RatingType) {
             const previousValue = res.PreviousValue ?? res.previous_value;
             const currentValue = res.Value ?? res.value;
             if (!user || previousValue == undefined || currentValue == undefined) {
-                await interaction.reply({ content: `Failed to update ${ratingLabel} for friend code "${fc}": server returned an unexpected response` });
+                await interaction.reply({ content: `Failed to update ${selectedRatingLabel} for friend code "${fc}": server returned an unexpected response` });
                 return;
             }
 
-            await sendEmbedLog(interaction, `set ${ratingLabel}`, fc, user, [
-                { name: `Previous ${ratingLabel}`, value: previousValue.toLocaleString() },
-                { name: `New ${ratingLabel}`, value: currentValue.toLocaleString() },
+            await sendEmbedLog(interaction, `set ${selectedRatingLabel}`, fc, user, [
+                { name: `Previous ${selectedRatingLabel}`, value: previousValue.toLocaleString() },
+                { name: `New ${selectedRatingLabel}`, value: currentValue.toLocaleString() },
                 { name: "Reason", value: reason },
             ], false, true);
         }

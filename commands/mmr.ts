@@ -31,7 +31,7 @@ export default {
             return;
         }
 
-        if (!ratings || ratings.mmr <= 0) {
+        if (!ratings || (ratings.mmr_retro <= 0 && ratings.mmr_ct <= 0 && ratings.mmr_regular <= 0)) {
             await interaction.reply({
                 content: `No MMR is recorded for friend code "${fc}".`,
                 flags: MessageFlags.Ephemeral,
@@ -46,7 +46,9 @@ export default {
                 .setThumbnail(getMiiImageURL(fc))
                 .addFields(
                     { name: "Profile ID", value: `${pid}` },
-                    { name: "MMR", value: ratings.mmr.toLocaleString() },
+                    { name: "MMR (Retro)", value: ratings.mmr_retro > 0 ? ratings.mmr_retro.toLocaleString() : "Unknown" },
+                    { name: "MMR (CT)", value: ratings.mmr_ct > 0 ? ratings.mmr_ct.toLocaleString() : "Unknown" },
+                    { name: "MMR (Regular)", value: ratings.mmr_regular > 0 ? ratings.mmr_regular.toLocaleString() : "Unknown" },
                 )
                 .setTimestamp()],
         });
