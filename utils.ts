@@ -169,7 +169,7 @@ export interface MKWRatings {
 }
 
 export async function getMKWRatings(pid: number): Promise<[boolean, MKWRatings | null]> {
-    const [success, res] = await makeRequest(`/api/mkw_rr_ratings?pid=${pid}`, "GET");
+    const [success, res] = await makeWFCRequest(`/api/mkw_rr_ratings?pid=${pid}`, "GET");
     if (!success)
         return [false, null];
 

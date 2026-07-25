@@ -1,6 +1,6 @@
 import { CacheType, ChatInputCommandInteraction, MessageFlags, SlashCommandBuilder } from "discord.js";
 import { getConfig } from "../config.js";
-import { makeRequest } from "../utils.js";
+import { makeWFCRequest } from "../utils.js";
 
 const config = getConfig();
 
@@ -26,7 +26,7 @@ export default {
 
     exec: async function(interaction: ChatInputCommandInteraction<CacheType>) {
         const season = interaction.options.getInteger("season", true);
-        const [success, rawRes] = await makeRequest("/api/set_mkw_mmr_season", "POST", {
+        const [success, rawRes] = await makeWFCRequest("/api/set_mkw_mmr_season", "POST", {
             secret: config.wfcSecret,
             season: season,
         });

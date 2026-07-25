@@ -1,6 +1,6 @@
 import { CacheType, ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import { getConfig } from "../config.js";
-import { makeRequest, pidToFc, resolveModRestrictPermission, resolvePidFromString, sendEmbedLog, validateID, WiiLinkUser } from "../utils.js";
+import { makeWFCRequest, pidToFc, resolveModRestrictPermission, resolvePidFromString, sendEmbedLog, validateID, WiiLinkUser } from "../utils.js";
 
 const config = getConfig();
 
@@ -85,7 +85,7 @@ export function makeSetRatingCommand(ratingType: RatingType) {
             }
 
             const fc = pidToFc(pid);
-            const [success, rawRes] = await makeRequest("/api/set_mkw_rating", "POST", {
+            const [success, rawRes] = await makeWFCRequest("/api/set_mkw_rating", "POST", {
                 secret: config.wfcSecret,
                 pid: pid,
                 rating_type: mmrMode ? `mmr_${mmrMode}` : ratingType,
