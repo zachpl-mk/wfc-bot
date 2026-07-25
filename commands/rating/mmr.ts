@@ -1,10 +1,9 @@
 import { CacheType, ChatInputCommandInteraction, EmbedBuilder, MessageFlags, SlashCommandBuilder } from "discord.js";
-import { getColor, getMiiImageURL, getMKWRatings, pidToFc, resolvePidFromString, validateID } from "../utils.js";
+import { getColor, getMiiImageURL, getMKWRatings, pidToFc, resolvePidFromString, validateID } from "../../utils.js";
+import { PermissionBit } from "../shared/roles.js";
 
 export default {
-    modOnly: false,
-    adminOnly: false,
-
+    permissions: PermissionBit.MODERATOR,
     data: new SlashCommandBuilder()
         .setName("mmr")
         .setDescription("Show a player's MMR")

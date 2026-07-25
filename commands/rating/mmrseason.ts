@@ -1,6 +1,7 @@
 import { CacheType, ChatInputCommandInteraction, MessageFlags, SlashCommandBuilder } from "discord.js";
-import { getConfig } from "../config.js";
-import { makeWFCRequest } from "../utils.js";
+import { getConfig } from "../../config.js";
+import { makeWFCRequest } from "../../utils.js";
+import { PermissionBit } from "../shared/roles.js";
 
 const config = getConfig();
 
@@ -13,9 +14,7 @@ interface SeasonResponse {
 }
 
 export default {
-    adminOnly: true,
-    modOnly: false,
-
+    permissions: PermissionBit.ADMIN,
     data: new SlashCommandBuilder()
         .setName("mmrseason")
         .setDescription("Switch the active Retro Rewind MMR season")
