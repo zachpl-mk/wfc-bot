@@ -18,7 +18,7 @@ export default {
 
     data: new SlashCommandBuilder()
         .setName("mmrseason")
-        .setDescription("Switch the active Mario Kart Wii MMR season")
+        .setDescription("Switch the active Retro Rewind MMR season")
         .addIntegerOption(option => option.setName("season")
             .setDescription("season number to activate")
             .setRequired(true)
@@ -42,7 +42,7 @@ export default {
 
         const previous = res.previous_season ?? res.previousSeason;
         await interaction.reply({
-            content: `MMR season switched from ${previous ?? "the previous season"} to season ${res.season ?? season}. Players without saved ratings in this season start at 1,000 MMR.`,
+            content: `MMR season switched from ${previous ?? "the previous season"} to season ${res.season ?? season}!`,
         });
     },
 };
