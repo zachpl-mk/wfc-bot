@@ -1,5 +1,5 @@
 import { CacheType, ChatInputCommandInteraction, InteractionReplyOptions, MessageFlags, } from "discord.js";
-import { createUserEmbed, makeWFCRequest, pidToFc, resolvePidFromString, validateID } from "../../utils.js";
+import { createUserEmbed, getMKWRatings, makeWFCRequest, pidToFc, resolvePidFromString, validateID, WiiLinkUser } from "../../utils.js";
 import { getConfig } from "../../config.js";
 
 const config = getConfig();
@@ -50,9 +50,19 @@ export async function pinfo(interaction: ChatInputCommandInteraction<CacheType>,
         return;
     }
 
+    const user = (res.User ?? res.user) as WiiLinkUser;
+    const [ratingsSuccess, ratings] = await getMKWRatings(pid);
+    if (ratingsSuccess && ratings) {
+        user.VR = ratings.vr;
+        user.BR = ratings.br;
+        user.MMRRT = ratings.mmr_rt;
+        user.MMRCT = ratings.mmr_ct;
+        user.MMRVanilla = ratings.mmr_vanilla;
+    }
+
     await reply(
         interaction,
         priv,
-        { embeds: [createUserEmbed(res.User, priv)] }
+        { embeds: [createUserEmbed(user, priv)] }
     );
 }
