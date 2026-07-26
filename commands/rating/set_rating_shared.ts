@@ -107,11 +107,11 @@ export function makeSetRatingCommand(ratingType: RatingType) {
                 return;
             }
 
-            await sendEmbedLog(interaction, `set ${selectedRatingLabel}`, fc, user, [
+            await sendEmbedLog(interaction, `set ${selectedRatingLabel}`, user, [
                 { name: `Previous ${selectedRatingLabel}`, value: previousValue.toLocaleString() },
                 { name: `New ${selectedRatingLabel}`, value: currentValue.toLocaleString() },
                 { name: "Reason", value: reason },
-            ], false, true);
+            ], false);
         }
     };
 }
